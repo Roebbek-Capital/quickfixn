@@ -23,6 +23,15 @@ namespace QuickFix
         public bool SocketNodelay { get; internal set; }
 
         /// <summary>
+        /// Gets a value that specifies that a proxy configured in the system should be used or not. If no proxy is configured,
+        /// it will of course not be used even this this value is set to true.
+        /// </summary>
+        /// <value>
+        /// <c>false</c> if no proxy must be used; otherwise, <c>true</c>. The default is <c>true</c>.
+        /// </value>
+        public bool SocketUseProxy { get; internal set; }
+
+        /// <summary>
         /// Gets the size of the <see cref="T:System.Net.Sockets.Socket"/> receive buffer.
         /// </summary>
         /// <value>
@@ -149,6 +158,7 @@ namespace QuickFix
             CheckCertificateRevocation = true;
             RequireClientCertificate = true;
             SocketNodelay = true;
+            SocketUseProxy = true;
         }
 
         /// <summary>
@@ -161,8 +171,14 @@ namespace QuickFix
         /// <param name="dictionary">the dictionary to read the settings from</param>
         public void Configure(QuickFix.Dictionary dictionary)
         {
+            if (dictionary.Has(SessionSettings.SSL_REQUIRE_CLIENT_CERTIFICATE))
+                RequireClientCertificate = dictionary.GetBool(SessionSettings.SSL_REQUIRE_CLIENT_CERTIFICATE);
+
             if (dictionary.Has(SessionSettings.SOCKET_NODELAY))
                 SocketNodelay = dictionary.GetBool(SessionSettings.SOCKET_NODELAY);
+
+            if (dictionary.Has(SessionSettings.SOCKET_USE_PROXY))
+                SocketUseProxy = dictionary.GetBool(SessionSettings.SOCKET_USE_PROXY);
 
             if (dictionary.Has(SessionSettings.SOCKET_RECEIVE_BUFFER_SIZE))
                 SocketReceiveBufferSize = dictionary.GetInt(SessionSettings.SOCKET_RECEIVE_BUFFER_SIZE);
